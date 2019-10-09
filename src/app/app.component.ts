@@ -1,47 +1,64 @@
-import { Component } from '@angular/core';
-import {SlimLoadingBarService} from 'ng2-slim-loading-bar';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { Exame } from './exame';
+import { ExameService } from './exame.service';
 
-import { NavigationCancel,
-  Event,
-  NavigationEnd,
-  NavigationError,
-  NavigationStart,
-  Router } from '@angular/router';
 @Component({
-  selector: 'app-root',
+  selector: 'app-component',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
+  formCliente: FormGroup;
+  sucesso;
+
+  constructor(private formBuilder: FormBuilder, private exameService: ExameService) { }
 
   ngOnInit() {
-    this.optionsSelect = [
-      //TODO: Criar service para retornar o tipo dos campos que desejo colocar
-      { value: '1', label: 'Admissional' },
-      { value: '2', label: 'Demissional' },
-      { value: '3', label: 'Transferencia de bla bla bla' },
-      ];
+    this.createForm(new Exame());
   }
-  
-  optionsSelect: Array<any>;
-  title = 'angular7crud';
-  constructor(private _loadingBar: SlimLoadingBarService, private _router: Router) {
-    this._router.events.subscribe((event: Event) => {
-      this.navigationInterceptor(event);
+
+  createForm(exame: Exame) {
+    this.formCliente = this.formBuilder.group({
+      risco_ocupacional: [exame.risco_ocupacional],
+      tipo_exame_codigo: [exame.tipo_exame_codigo],
+      paciente_codigo: [exame.paciente_codigo],
+      medico_codigo: [exame.medico_codigo],
     });
   }
-  private navigationInterceptor(event: Event): void {
-    if (event instanceof NavigationStart) {
-      this._loadingBar.start();
-    }
-    if (event instanceof NavigationEnd) {
-      this._loadingBar.complete();
-    }
-    if (event instanceof NavigationCancel) {
-      this._loadingBar.stop();
-    }
-    if (event instanceof NavigationError) {
-      this._loadingBar.stop();
-    }
+
+  setMedico($event) {
+    // tslint:disable-next-line: deprecation
+    this.formCliente.get('medico_codigo').setValue((event.target as HTMLInputElement).value);
+  }
+
+  setPaciente($event) {
+    // tslint:disable-next-line: deprecation
+    this.formCliente.get('paciente_codigo').setValue((event.target as HTMLInputElement).value);
+  }
+
+  setTipoExame($event) {
+    // tslint:disable-next-line: deprecation
+    this.formCliente.get('tipo_exame_codigo').setValue((event.target as HTMLInputElement).value);
+  }
+
+  setRiscoOcupacional($event) {
+    // tslint:disable-next-line: deprecation
+    this.formCliente.get('risco_ocupacional').setValue((event.target as HTMLInputElement).value);
+  }
+
+  buildDTO() {
+    return {
+      medicoCodigo: this.formCliente.get('medico_codigo').value,
+      pacienteCodigo: this.formCliente.get('paciente_codigo').value,
+      tipoExame: this.formCliente.get('tipo_exame_codigo').value,
+      riscoOcupacional: this.formCliente.get('risco_ocupacional').value
+    };
+  }
+
+  salvar() {
+    this.exameService.addExame(this.buildDTO()).subscribe(data => {
+      this.sucesso = 'Sucesso ao salvar Exame';
+    });
   }
 }
