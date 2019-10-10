@@ -9,27 +9,16 @@ import { catchError, tap, map } from 'rxjs/operators';
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
 };
-const apiUrl = "/api";
+// const apiUrl = "/api";
+const apiUrl = "http://localhost:8081/api";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExameService {
-  uri = 'http://localhost:4000/exame';
+  uri = 'http://localhost:8081/api';
 
-  constructor(private http: HttpClient) { }
-
-  addBusiness(risco_ocupacional, tipo_exame_codigo, paciente_codigo, medico_codigo ) {
-    const obj = {
-      risco_ocupacional: risco_ocupacional,
-      tipo_exame_codigo: tipo_exame_codigo,
-      paciente_codigo: paciente_codigo,
-      medico_codigo: medico_codigo
-    };
-    console.log(obj);
-    this.http.post(`${this.uri}/add`, obj)
-        .subscribe(res => console.log('Done'));
-  }
+  constructor(private http: HttpClient) { } 
 
   private handleError<T> (operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
@@ -40,9 +29,8 @@ export class ExameService {
 
   getExames (): Observable<Exame[]> {
     return this.http.get<Exame[]>(`${this.uri}/all`)
-    // return this.http.get<Exame[]>(apiUrl)
       .pipe(
-        tap(heroes => console.log('fetched exames')),
+        tap(exames => console.log('fetched exames')),
         catchError(this.handleError('getExames', []))
       );
   }
@@ -56,7 +44,8 @@ export class ExameService {
   }
   
   addExame (exame): Observable<Exame> {
-    return this.http.post<Exame>(apiUrl, exame, httpOptions).pipe(
+    console.log("Exame:\n"+exame)
+    return this.http.post<Exame>(`${apiUrl}/add`, exame, httpOptions).pipe(
       tap((exame: Exame) => console.log(`added exame w/ codigo=${exame.codigo}`)),
       catchError(this.handleError<Exame>('addExame'))
     );
