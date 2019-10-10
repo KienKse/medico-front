@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Exame } from './exame';
 import { ExameService } from './exame.service';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-component',
@@ -60,8 +59,9 @@ export class AppComponent implements OnInit {
   salvar() {
     console.log(this.buildDTO())
     this.exameService.addExame(this.buildDTO()).subscribe(data => {
-      this.sucesso = 'Sucesso ao salvar Exame';
-    });
+      // this.sucesso = 'Sucesso ao salvar Exame';
+      
+    })
   }
 
   get() {
@@ -80,3 +80,6 @@ export class AppComponent implements OnInit {
   }  
   
 }
+
+
+export var sucesso; 

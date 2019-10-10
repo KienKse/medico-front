@@ -3,8 +3,13 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 
 import { Exame } from '../app/exame';
 
-import { Observable, of, throwError } from 'rxjs';
-import { catchError, tap, map } from 'rxjs/operators';
+import { sucesso } from '../app/app.component';
+
+
+import { Observable, of } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+
+
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -18,8 +23,9 @@ const apiUrl = "http://localhost:8081/api";
 export class ExameService {
   uri = 'http://localhost:8081/api';
 
+  
   constructor(private http: HttpClient) { } 
-
+  
   private handleError<T> (operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       console.error(error);
